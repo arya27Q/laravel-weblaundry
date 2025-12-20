@@ -52,15 +52,15 @@
     </button>
 
     <div class="account-menu" id="accountMenu">
-        <a href="#">
+       <a href="/login" class="{{ request()->is('login*') ? 'active' : '' }}">
             <i class="fa-solid fa-right-to-bracket"></i>
-            Login
-        </a>
-        <a href="#">
+         <span>Login</span>
+    </a>
+        <a href="/signup" class="{{ request()->is('signup*') ? 'active' : '' }}">
             <i class="fa-solid fa-user-plus"></i>
             Sign Up
         </a>
-        <a href="#">
+        <a href="/forgot-password" class="{{ request()->is('forgot-password*') ? 'active' : '' }}">
             <i class="fa-solid fa-key"></i>
             Forgot Password
         </a>

@@ -183,6 +183,159 @@ body {
     padding: 12px 0;
     border-top: 1px solid #e5e7eb;
 }
+.modal-overlay {
+    display: none; 
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); 
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    animation: slideDown 0.3s ease-out;
+    margin-bottom: 30px;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px; 
+}
+
+
+.modal-content {
+    background: #fff;
+    padding: 32px; 
+    border-radius: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 450px;
+    position: relative;
+    box-sizing: border-box; 
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #374151;
+    font-size: 14px;
+    text-align: left; 
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+    box-sizing: border-box; 
+    transition: all 0.2s;
+    display: block;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.btn-save {
+    width: 100%;
+    background-color: #f97316;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+.btn-save:hover {
+    background-color: #ea580c;
+}
+
+
+#btnCloseForm {
+    position: absolute;
+    top: 15px;      
+    right: 15px;    
+    background: #f3f4f6;
+    color: #6b7280;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    z-index: 10;   
+}
+
+#btnCloseForm:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+#btnCloseModal {
+    position: absolute;
+    top: 15px;      
+    right: 15px;    
+    background: #f3f4f6;
+    color: #6b7280;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    z-index: 10;   
+}
+
+#btnCloseModal:hover {
+    background: #fee2e2;
+    color: #ef4444;
+}
 
 /* transaksi */
 .filter-grid {
@@ -203,7 +356,7 @@ body {
 .input,
 .btn-primary,
 .btn-secondary {
-    height: 48px;
+    height: 45px;
     box-sizing: border-box;
 }
 
@@ -229,9 +382,9 @@ body {
     color: #fff;
     border: none;
     border-radius: 10px;
-    padding: 0 18px;
+    padding:15px 25px !important;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 610;
 }
 
 .btn-primary:hover {
@@ -248,6 +401,48 @@ body {
     font-weight: 500;
     white-space: nowrap;
 }
+
+
+.modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    .modal-content {
+        background: #fff;
+        padding: 32px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 500px;
+        position: relative;
+        box-sizing: border-box;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; }
+    .form-input {
+        width: 100%;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        box-sizing: border-box;
+        outline: none;
+        color: #2d2d2f;
+    }
+    .input-readonly { background: #f3f4f6; cursor: not-allowed; font-weight: bold; }
+    #btnCloseModal {
+        position: absolute; top: 15px; right: 15px;
+        background: none; border: none; font-size: 18px; cursor: pointer; color: #666;
+    }
+
+  
+
 .input-icon {
     position: relative;
 }
@@ -294,3 +489,45 @@ body {
 .icon.green {
     color: #f97316;
 }
+
+
+select {
+    width: 110%;
+    padding: 9px 13px !important;
+    border-radius: 10px !important;
+    border: 1px solid #e5e7eb;
+    background-color:#f97316;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    appearance: none; 
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    transition: all 0.2s;
+    outline: none;
+}
+
+select:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+    background-color: #fff;
+    
+}
+
+
+.card-value {
+    margin-top: 10px;
+}
+
+.card-title {
+    font-weight: 600;
+    color: #1f2937;
+}
+/* Warna spesifik untuk tiap status di dalam list */
+option[value="Menunggu"] { color: #6b7280; }
+option[value="Dicuci"] { color: #2563eb; }
+option[value="Disetrika"] { color: #7c3aed; }
+option[value="Siap Diambil"] { color: #f59e0b; }
+option[value="Selesai"] { color: #10b981; font-weight: bold; }

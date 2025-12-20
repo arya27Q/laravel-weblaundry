@@ -150,4 +150,78 @@
     </div>
 </div>
 
+
+<h3 style="margin:40px 0 16px; font-weight:600;">Statistik Pendapatan Mingguan</h3>
+<div class="card" style="padding: 24px; margin-bottom: 32px;">
+    <canvas id="incomeChart" style="width: 100%; max-height: 300px;"></canvas>
+</div>
+
+<h3 style="margin:40px 0 16px; font-weight:600;">Statistik Pendapatan Bulanan </h3>
+<div class="card" style="padding: 24px; margin-bottom: 40px;">
+    <canvas id="monthlyChart" style="width: 100%; max-height: 300px;"></canvas>
+</div>
+
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    
+    const ctxWeekly = document.getElementById('incomeChart').getContext('2d');
+    new Chart(ctxWeekly, {
+        type: 'line',
+        data: {
+            labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+            datasets: [{
+                label: 'Pendapatan',
+                data: [0, 0, 0, 0, 0, 0, 0],
+                backgroundColor: 'rgba(249, 115, 22, 0.2)',
+                borderColor: '#f97316',
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    
+    const ctxMonthly = document.getElementById('monthlyChart').getContext('2d');
+    new Chart(ctxMonthly, {
+        type: 'bar', 
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+            datasets: [{
+                label: 'Total Pendapatan (Rp)',
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                backgroundColor: '#f97316',
+                borderRadius: 8, 
+                hoverBackgroundColor: '#ea580c'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f3f4f6' },
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
 @endsection
