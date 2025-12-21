@@ -161,7 +161,7 @@
     <canvas id="monthlyChart" style="width: 100%; max-height: 300px;"></canvas>
 </div>
 
-    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
