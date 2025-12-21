@@ -1,8 +1,11 @@
+
 @extends('layouts.dashboard')
 
 @section('title', 'Dashboard')
 
 @section('content')
+
+
 
 <!-- SUMMARY -->
 <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:24px;">
@@ -161,7 +164,7 @@
     <canvas id="monthlyChart" style="width: 100%; max-height: 300px;"></canvas>
 </div>
 
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

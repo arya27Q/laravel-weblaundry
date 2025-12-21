@@ -40,7 +40,7 @@
                     </div>
                     <div class="form-group" style="margin-top: 20px;">
                         <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Alamat Lengkap</label>
-                        <textarea class="form-control" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">Jl. Raya No. 123, Surabaya</textarea>
+                        <textarea class="form-control" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">Jl. Raya Gubeng No. 123, Kota Surabaya, Jawa Timur</textarea>
                     </div>
                     <div style="margin-top: 20px; text-align: right;">
                         <button type="submit" style="background: #f97316; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan Perubahan</button>
@@ -77,7 +77,9 @@
                     <h3 style="font-weight: 700; color: #1f2937;">
                         <i class="fa-solid fa-tags" style="color: #f97316; margin-right: 8px;"></i> Daftar Layanan & Harga
                     </h3>
-                    <button style="background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">+ Tambah Layanan</button>
+                    <button id="btnTambahLayanan" style="background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                        + Tambah Layanan
+                    </button>
                 </div>
                 <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
                     <thead>
@@ -137,6 +139,46 @@
     </div>
 </div>
 
+<div id="modalLayanan" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="font-weight:700; color: #1f2937;">Tambah Layanan Baru</h3>
+            <i class="fa-solid fa-xmark" id="closeModalLayanan" style="cursor:pointer; color: #9ca3af; font-size: 20px;"></i>
+        </div>
+
+        <form action="#">
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Nama Layanan</label>
+                <input type="text" class="form-control" placeholder="Contoh: Cuci Kiloan Express" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div class="form-group">
+                    <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Satuan</label>
+                    <select class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                        <option value="Kg">Kg</option>
+                        <option value="Pcs">Pcs</option>
+                        <option value="Set">Set</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Harga (Rp)</label>
+                    <input type="number" class="form-control" placeholder="0" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Estimasi Selesai</label>
+                <input type="text" class="form-control" placeholder="Contoh: 1 Hari / 24 Jam" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+            </div>
+
+            <button type="submit" style="width: 100%; background: #f97316; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+                Simpan Layanan
+            </button>
+        </form>
+    </div>
+</div>
+
 <style>
     .nav-setting.active {
         background: #fff7ed !important;
@@ -149,28 +191,49 @@
 </style>
 
 <script>
+    // FUNGSI PINDAH TAB
     function openSetting(tabName, elmnt) {
-        // Sembunyikan semua tab
         var i, tabcontent, navlinks;
         tabcontent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
-
-        // Hapus class 'active' dan reset warna semua menu
         navlinks = document.getElementsByClassName("nav-setting");
         for (i = 0; i < navlinks.length; i++) {
             navlinks[i].classList.remove("active");
             navlinks[i].style.color = "#64748b";
             navlinks[i].style.background = "transparent";
         }
-
-        // Tampilkan tab yang dipilih & tambahkan class active
         document.getElementById(tabName).style.display = "block";
         elmnt.classList.add("active");
         elmnt.style.color = "#f97316";
         elmnt.style.background = "#fff7ed";
     }
+
+    // KONTROL MODAL TAMBAH LAYANAN
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalLayanan = document.getElementById('modalLayanan');
+        const btnLayanan = document.getElementById('btnTambahLayanan');
+        const closeLayanan = document.getElementById('closeModalLayanan');
+
+        if(btnLayanan) {
+            btnLayanan.onclick = function() {
+                modalLayanan.style.display = 'flex';
+            }
+        }
+
+        if(closeLayanan) {
+            closeLayanan.onclick = function() {
+                modalLayanan.style.display = 'none';
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modalLayanan) {
+                modalLayanan.style.display = 'none';
+            }
+        }
+    });
 </script>
 
 @endsection

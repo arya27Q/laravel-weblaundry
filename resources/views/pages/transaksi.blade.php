@@ -4,9 +4,6 @@
 
 @section('content')
 
-
-  
-
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; ">
     <h2 style="font-size:22px; font-weight:600;">Data Transaksi</h2>
 
@@ -35,10 +32,19 @@
                 <input type="date" class="form-input" required value="{{ date('Y-m-d') }}">
             </div>
 
+            <div class="form-group">
+                <label>Jenis Layanan</label>
+                <select class="form-input" id="jenisLayanan" required>
+                    <option value="kg" selected>Cuci Kiloan (Paket Kg)</option>
+                    <option value="pcs">Cuci Satuan (Input Bebas Pcs)</option>
+                </select>
+            </div>
+
             <div style="display: flex; gap: 12px;">
                 <div class="form-group" style="flex: 1;">
-                    <label>Berat (Kg)</label>
-                    <select class="form-input" id="beratInput" required>
+                    <label id="labelInput">Berat (Kg)</label>
+                    
+                    <select class="form-input" id="beratDropdown">
                         <option value="">Pilih Berat</option>
                         <option value="4">4 kg</option>
                         <option value="7">7 kg</option>
@@ -47,9 +53,12 @@
                         <option value="15">15 kg</option>
                         <option value="20">20 kg</option>
                     </select>
+
+                    <input type="number" class="form-input" id="beratBebas" placeholder="Masukan jumlah pcs..." style="display: none;">
                 </div>
+                
                 <div class="form-group" style="flex: 1;">
-                    <label>Harga (Otomatis)</label>
+                    <label>Harga </label>
                     <input type="text" id="hargaOtomatis" class="form-input input-readonly" readonly placeholder="Rp 0">
                 </div>
             </div>
@@ -84,8 +93,7 @@
             <input type="date" class="input with-icon">
         </div>
         <button class="btn-secondary btn-click">
-            <i class="fa-solid fa-filter" style="margin-right:6px;"></i>
-            Filter
+            <i class="fa-solid fa-filter" style="margin-right:6px;"></i> Filter
         </button>
     </div>
 </div>
@@ -124,9 +132,7 @@
         </thead>
         <tbody>
             <tr>
-                <td colspan="6" style="text-align:center; color:#999; padding:24px;">
-                    Belum ada transaksi
-                </td>
+                <td colspan="6" style="text-align:center; color:#999; padding:24px;">Belum ada transaksi</td>
             </tr>
         </tbody>
     </table>
@@ -136,22 +142,48 @@
     const modal = document.getElementById('modalTransaksi');
     const btnTambah = document.getElementById('btnTambahTransaksi');
     const btnClose = document.getElementById('btnCloseModal');
-    const beratInput = document.getElementById('beratInput');
-    const hargaOtomatis = document.getElementById('hargaOtomatis');
-
     
+    const jenisLayanan = document.getElementById('jenisLayanan');
+    const beratDropdown = document.getElementById('beratDropdown');
+    const beratBebas = document.getElementById('beratBebas');
+    const hargaOtomatis = document.getElementById('hargaOtomatis');
+    const labelInput = document.getElementById('labelInput');
+
     btnTambah.onclick = () => modal.style.display = 'flex';
     btnClose.onclick = () => modal.style.display = 'none';
     window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; }
 
+    
+    const priceKg = { "4": 7000, "7": 10000, "9": 15000, "12": 18000, "15": 25000, "20": 30000 };
+    
+    
+    const HARGA_PER_PCS = 15000;
 
-    const priceMapping = { "4": 5000, "7": 8000, "9": 11000, "12": 15000, "15": 18000, "20": 25000 };
+    function updateTampilanDanHarga() {
+        const jenis = jenisLayanan.value;
+        
+        if (jenis === 'kg') {
+            labelInput.innerText = "Berat (Kg)";
+            beratDropdown.style.display = 'block';
+            beratBebas.style.display = 'none';
+            
+            const qty = beratDropdown.value;
+            const total = priceKg[qty] || 0;
+            hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
+        } else {
+            labelInput.innerText = "Jumlah (Pcs)";
+            beratDropdown.style.display = 'none';
+            beratBebas.style.display = 'block';
+            
+            const qty = parseFloat(beratBebas.value) || 0;
+            const total = qty * HARGA_PER_PCS;
+            hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
+        }
+    }
 
-    beratInput.onchange = function() {
-        const val = this.value;
-        const total = priceMapping[val] || 0;
-        hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
-    };
+    jenisLayanan.onchange = updateTampilanDanHarga;
+    beratDropdown.onchange = updateTampilanDanHarga;
+    beratBebas.oninput = updateTampilanDanHarga;
 </script>
 
 @endsection
