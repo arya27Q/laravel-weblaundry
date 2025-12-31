@@ -16,10 +16,10 @@
     ];
 @endphp
 
-{{-- 1. LAYANAN KILOAN --}}
+
 <h3 style="margin-bottom:16px; font-size: 16px; color: #64748b;">Layanan Kiloan</h3>
 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap:16px; margin-bottom:30px;">
-    {{-- Kita filter data dari controller yang unitnya 'Kg' --}}
+   
     @forelse($cucian_aktif->filter(fn($item) => $item->details->first()->service->unit == 'Kg') as $tr)
     <div class="card" style="padding: 16px; border-top: 4px solid #f97316;">
         <div class="card-title">
@@ -42,10 +42,10 @@
     @endforelse
 </div>
 
-{{-- 2. LAYANAN SATUAN --}}
+
 <h3 style="margin-bottom:16px; font-size: 16px; color: #64748b;">Layanan Satuan (Transaksi Aktif)</h3>
 <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 40px; scrollbar-width: thin;">
-    {{-- Kita filter data dari controller yang unitnya 'Pcs' --}}
+    
     @forelse($cucian_aktif->filter(fn($item) => $item->details->first()->service->unit == 'Pcs') as $tr)
     <div class="card" style="min-width: 170px; flex-shrink: 0; padding: 16px; border-top: 4px solid #3b82f6;">
         <div class="card-title">
@@ -69,7 +69,7 @@
     @endforelse
 </div>
 
-{{-- 3. RINGKASAN HARI INI --}}
+
 <h3 style="margin-bottom:16px;">Ringkasan Hari Ini</h3>
 <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; margin-bottom:40px;">
     <div class="card">

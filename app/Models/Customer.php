@@ -9,17 +9,13 @@ class Customer extends Model
 {
     use HasFactory;
 
-    // Kolom yang boleh diisi (mass assignment)
+   
     protected $fillable = [
         'name',
         'phone',
         'address'
     ];
 
-    /**
-     * Relasi ke tabel Transactions
-     * Satu Customer bisa memiliki banyak Transaksi (One to Many)
-     */
     public function transactions()
     {
         return $this->hasMany(Transaction::class);

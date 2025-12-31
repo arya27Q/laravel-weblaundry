@@ -4,20 +4,34 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\CucianController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\PembayaranController; // Sesuaikan dengan nama yang kamu pilih
 
 // 1. Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-// 2. Pelanggan (Gunakan Resource agar Edit & Hapus Terdaftar Otomatis)
-// Ini akan menyediakan rute: pelanggan.index, pelanggan.store, pelanggan.update, pelanggan.destroy, dll.
+// 2. Pelanggan
 Route::resource('pelanggan', PelangganController::class);
 
+// 3. Transaksi
+Route::get('/transaksi', [TransactionController::class, 'index'])->name('transaksi.index');
+Route::post('/transaksi', [TransactionController::class, 'store'])->name('transaksi.store');
+
+// 4. Cucian
 Route::get('/cucian', [CucianController::class, 'index'])->name('cucian');
 Route::post('/cucian/update-status', [CucianController::class, 'updateStatus']);
-Route::view('/transaksi', 'pages.transaksi')->name('transaksi');
-Route::view('/pembayaran', 'pages.pembayaran')->name('pembayaran');
+
+// 5. Pembayaran (Menggunakan PembayaranController)
+// Route untuk menampilkan halaman (index)
+Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+
+// Route untuk memproses update pembayaran lunas
+Route::post('/pembayaran/konfirmasi', [PembayaranController::class, 'update'])->name('pembayaran.update');
+
+// 6. Laporan & Pengaturan
 Route::view('/laporan', 'pages.laporan')->name('laporan');
 Route::view('/pengaturan', 'pages.pengaturan')->name('pengaturan');
 
+// 7. Auth
 Route::view('/login', 'pages.login')->name('login');
 Route::view('/signup', 'pages.signup')->name('signup');

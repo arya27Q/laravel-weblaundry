@@ -4,47 +4,44 @@
 
 @section('content')
 
-<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; ">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
     <h2 style="font-size:22px; font-weight:600;">Data Transaksi</h2>
 
-    <button class="btn-primary" id="btnTambahTransaksi">
+    <button class="btn-primary" id="btnTambahTransaksi" style="background:#f97316; color:#fff; border:none; padding:12px 20px; border-radius:10px; font-weight:600; cursor:pointer;">
         + Tambah Transaksi
     </button>
 </div>
 
-<div id="modalTransaksi" class="modal-overlay">
-    <div class="modal-content">
-        <button id="btnCloseModal">✕</button>
+{{-- MODAL TRANSAKSI --}}
+<div id="modalTransaksi" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
+    <div class="modal-content" style="background:#fff; padding:30px; border-radius:15px; width:500px; position:relative;">
+        <button id="btnCloseModal" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
         <h3 style="margin-bottom: 20px; font-weight: 700;">Buat Transaksi Baru</h3>
         
-        <form id="formTransaksi">
-            <div class="form-group">
-                <label>Nama Pelanggan</label>
-                <select class="form-input" required>
+        <form id="formTransaksi" action="{{ route('transaksi.store') }}" method="POST">
+            @csrf
+            <div class="form-group" style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">Pilih Pelanggan</label>
+                <select name="customer_id" class="form-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;" required>
                     <option value="">-- Pilih Pelanggan --</option>
-                    <option>Budi Santoso</option>
-                    <option>Siti Aminah</option>
+                    @foreach($customers as $c)
+                        <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->phone }})</option>
+                    @endforeach
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Tanggal Masuk</label>
-                <input type="date" class="form-input" required value="{{ date('Y-m-d') }}">
-            </div>
-
-            <div class="form-group">
-                <label>Jenis Layanan</label>
-                <select class="form-input" id="jenisLayanan" required>
-                    <option value="kg" selected>Cuci Kiloan (Paket Kg)</option>
-                    <option value="pcs">Cuci Satuan (Input Bebas Pcs)</option>
+            <div class="form-group" style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px;">Jenis Layanan</label>
+                <select id="jenisLayanan" name="service_type" class="form-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;" required>
+                    <option value="kg">Cuci Kiloan (Kg)</option>
+                    <option value="pcs">Cuci Satuan (Pcs)</option>
                 </select>
             </div>
 
-            <div style="display: flex; gap: 12px;">
+            <div style="display: flex; gap: 12px; margin-bottom:15px;">
                 <div class="form-group" style="flex: 1;">
                     <label id="labelInput">Berat (Kg)</label>
-                    
-                    <select class="form-input" id="beratDropdown">
+                    <select name="qty_kg" class="form-input" id="beratDropdown" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
                         <option value="">Pilih Berat</option>
                         <option value="4">4 kg</option>
                         <option value="7">7 kg</option>
@@ -53,19 +50,19 @@
                         <option value="15">15 kg</option>
                         <option value="20">20 kg</option>
                     </select>
-
-                    <input type="number" class="form-input" id="beratBebas" placeholder="Masukan jumlah pcs..." style="display: none;">
+                    <input type="number" name="qty_pcs" class="form-input" id="beratBebas" placeholder="Masukan jumlah pcs..." style="display: none; width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
                 </div>
                 
                 <div class="form-group" style="flex: 1;">
-                    <label>Harga </label>
-                    <input type="text" id="hargaOtomatis" class="form-input input-readonly" readonly placeholder="Rp 0">
+                    <label>Total Harga</label>
+                    <input type="text" id="hargaOtomatis" class="form-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; background:#f3f4f6;" readonly placeholder="Rp 0">
+                    <input type="hidden" name="total_price" id="totalPriceHidden">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Status</label>
-                <input type="text" class="form-input input-readonly" value="Menunggu" readonly>
+            <div class="form-group" style="margin-bottom:20px;">
+                <label style="display:block; margin-bottom:5px;">Status</label>
+                <input type="text" name="status" class="form-input" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd; background:#f3f4f6;" value="Menunggu" readonly>
             </div>
 
             <button type="submit" style="width:100%; background:#f97316; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:600; cursor:pointer;">
@@ -75,65 +72,33 @@
     </div>
 </div>
 
-<div class="card" style="margin-bottom:32px;">
-    <div class="filter-grid">
-        <div class="input-icon">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="Cari pelanggan..." class="input with-icon">
-        </div>
-        <select class="input">
-            <option value="">Status</option>
-            <option>Menunggu</option>
-            <option>Dicuci</option>
-            <option>Disetrika</option>
-            <option>Selesai</option>
-        </select>
-        <div class="input-icon">
-            <i class="fa-regular fa-calendar"></i>
-            <input type="date" class="input with-icon">
-        </div>
-        <button class="btn-secondary btn-click">
-            <i class="fa-solid fa-filter" style="margin-right:6px;"></i> Filter
-        </button>
-    </div>
-</div>
-
-<div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:24px; margin-bottom:40px;">
-    <div class="card">
-        <div class="card-title"><i class="fa-solid fa-receipt icon orange"></i> Total Transaksi</div>
-        <div class="card-value">0</div>
-    </div>
-    <div class="card">
-        <div class="card-title"><i class="fa-solid fa-clock icon warning"></i> Belum Selesai</div>
-        <div class="card-value">0</div>
-    </div>
-    <div class="card">
-        <div class="card-title"><i class="fa-solid fa-circle-check icon success"></i> Selesai</div>
-        <div class="card-value">0</div>
-    </div>
-    <div class="card">
-        <div class="card-title"><i class="fa-solid fa-wallet icon green"></i> Pendapatan</div>
-        <div class="card-value">Rp 0</div>
-    </div>
-</div>
-
-<h3 style="font-weight:600; margin-left:7px;">Daftar Transaksi</h3>
-<div class="card">
-    <table class="table">
+{{-- DAFTAR TRANSAKSI --}}
+<h3 style="font-weight:600; margin-bottom:16px;">Daftar Transaksi</h3>
+<div class="card" style="background:#fff; padding:20px; border-radius:12px; border:1px solid #eee;">
+    <table style="width:100%; border-collapse: collapse;">
         <thead>
-            <tr>
-                <th>Kode</th>
+            <tr style="text-align:left; border-bottom:1px solid #eee;">
+                <th style="padding:12px;">Kode</th>
                 <th>Pelanggan</th>
                 <th>Tanggal</th>
                 <th>Status</th>
                 <th>Total</th>
-                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            <tr>
-                <td colspan="6" style="text-align:center; color:#999; padding:24px;">Belum ada transaksi</td>
+            @forelse($transactions as $t)
+            <tr style="border-bottom:1px solid #eee;">
+                <td style="padding:12px;">{{ $t->invoice_code }}</td>
+                <td>{{ $t->customer->name ?? 'N/A' }}</td>
+                <td>{{ $t->created_at->format('d/m/Y') }}</td>
+                <td>{{ $t->status_order }}</td>
+                <td>Rp {{ number_format($t->total_price, 0, ',', '.') }}</td>
             </tr>
+            @empty
+            <tr>
+                <td colspan="5" style="text-align:center; padding:20px; color:#999;">Belum ada data transaksi</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </div>
@@ -147,38 +112,33 @@
     const beratDropdown = document.getElementById('beratDropdown');
     const beratBebas = document.getElementById('beratBebas');
     const hargaOtomatis = document.getElementById('hargaOtomatis');
+    const totalPriceHidden = document.getElementById('totalPriceHidden');
     const labelInput = document.getElementById('labelInput');
 
     btnTambah.onclick = () => modal.style.display = 'flex';
     btnClose.onclick = () => modal.style.display = 'none';
-    window.onclick = (event) => { if (event.target == modal) modal.style.display = 'none'; }
 
-    
-    const priceKg = { "4": 7000, "7": 10000, "9": 15000, "12": 18000, "15": 25000, "20": 30000 };
-    
-    
+    const priceKg = { "4": 28000, "7": 45000, "9": 60000, "12": 80000, "15": 100000, "20": 130000 };
     const HARGA_PER_PCS = 15000;
 
     function updateTampilanDanHarga() {
         const jenis = jenisLayanan.value;
+        let total = 0;
         
         if (jenis === 'kg') {
             labelInput.innerText = "Berat (Kg)";
             beratDropdown.style.display = 'block';
             beratBebas.style.display = 'none';
-            
-            const qty = beratDropdown.value;
-            const total = priceKg[qty] || 0;
-            hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
+            total = priceKg[beratDropdown.value] || 0;
         } else {
             labelInput.innerText = "Jumlah (Pcs)";
             beratDropdown.style.display = 'none';
             beratBebas.style.display = 'block';
-            
-            const qty = parseFloat(beratBebas.value) || 0;
-            const total = qty * HARGA_PER_PCS;
-            hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
+            total = (parseFloat(beratBebas.value) || 0) * HARGA_PER_PCS;
         }
+
+        hargaOtomatis.value = total ? "Rp " + total.toLocaleString('id-ID') : "Rp 0";
+        totalPriceHidden.value = total;
     }
 
     jenisLayanan.onchange = updateTampilanDanHarga;

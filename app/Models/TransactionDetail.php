@@ -10,17 +10,12 @@ class TransactionDetail extends Model
     use HasFactory;
 
     protected $fillable = [
-        'transaction_id',
-        'service_id',
-        'qty',
-        'price_at_time',
+        'transaction_id', 
+        'service_id', 
+        'qty', 
+        'price_at_time', 
         'subtotal'
     ];
-
-    public function transaction()
-    {
-        return $this->belongsTo(Transaction::class);
-    }
 
     public function service()
     {
