@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
+        // Ini untuk membuat user login admin kamu
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin Laundry',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('password'), // passwordnya jadi: password
+        ]);
+
+        // INI YANG PENTING: Panggil Seeder Laundry yang kita buat tadi
+        $this->call([
+            LaundrySeeder::class,
         ]);
     }
 }

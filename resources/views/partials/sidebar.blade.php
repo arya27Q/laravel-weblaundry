@@ -8,11 +8,12 @@
             <span>Dashboard</span>
         </a>
 
-        <a href="{{ route('pelanggan') }}"
-           class="{{ request()->is('pelanggan') ? 'active' : '' }}">
-            <i class="fa-solid fa-users"></i>
-            <span>Pelanggan</span>
-        </a>
+      {{-- Cari baris ini --}}
+<a href="{{ route('pelanggan.index') }}"
+   class="{{ request()->is('pelanggan*') ? 'active' : '' }}">
+    <i class="fa-solid fa-users"></i>
+    <span>Pelanggan</span>
+</a>
 
         <a href="/transaksi"
            class="{{ request()->is('transaksi*') ? 'active' : '' }}">
