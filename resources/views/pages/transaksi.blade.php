@@ -41,6 +41,7 @@
             <div style="display: flex; gap: 12px; margin-bottom:15px;">
                 <div class="form-group" style="flex: 1;">
                     <label id="labelInput">Berat (Kg)</label>
+                    {{-- Dropdown untuk KG --}}
                     <select name="qty_kg" class="form-input" id="beratDropdown" style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
                         <option value="">Pilih Berat</option>
                         <option value="4">4 kg</option>
@@ -50,6 +51,7 @@
                         <option value="15">15 kg</option>
                         <option value="20">20 kg</option>
                     </select>
+                    {{-- Input manual untuk PCS --}}
                     <input type="number" name="qty_pcs" class="form-input" id="beratBebas" placeholder="Masukan jumlah pcs..." style="display: none; width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
                 </div>
                 
@@ -91,8 +93,12 @@
                 <td style="padding:12px;">{{ $t->invoice_code }}</td>
                 <td>{{ $t->customer->name ?? 'N/A' }}</td>
                 <td>{{ $t->created_at->format('d/m/Y') }}</td>
-                <td>{{ $t->status_order }}</td>
-                <td>Rp {{ number_format($t->total_price, 0, ',', '.') }}</td>
+                <td>
+                    <span style="padding:4px 8px; border-radius:6px; font-size:12px; background:#fef3c7; color:#92400e;">
+                        {{ $t->status_order }}
+                    </span>
+                </td>
+                <td><strong>Rp {{ number_format($t->total_price, 0, ',', '.') }}</strong></td>
             </tr>
             @empty
             <tr>
@@ -118,7 +124,9 @@
     btnTambah.onclick = () => modal.style.display = 'flex';
     btnClose.onclick = () => modal.style.display = 'none';
 
+    // Harga paket Kiloan
     const priceKg = { "4": 28000, "7": 45000, "9": 60000, "12": 80000, "15": 100000, "20": 130000 };
+    // Harga per PCS
     const HARGA_PER_PCS = 15000;
 
     function updateTampilanDanHarga() {
@@ -129,11 +137,17 @@
             labelInput.innerText = "Berat (Kg)";
             beratDropdown.style.display = 'block';
             beratBebas.style.display = 'none';
+            
+            // Reset input PCS agar tidak dikirim ke server saat pilih KG
+            beratBebas.value = ""; 
             total = priceKg[beratDropdown.value] || 0;
         } else {
             labelInput.innerText = "Jumlah (Pcs)";
             beratDropdown.style.display = 'none';
             beratBebas.style.display = 'block';
+            
+            // Reset dropdown KG agar tidak dikirim ke server saat pilih PCS
+            beratDropdown.value = "";
             total = (parseFloat(beratBebas.value) || 0) * HARGA_PER_PCS;
         }
 
@@ -141,9 +155,15 @@
         totalPriceHidden.value = total;
     }
 
+    // Jalankan fungsi setiap ada perubahan
     jenisLayanan.onchange = updateTampilanDanHarga;
     beratDropdown.onchange = updateTampilanDanHarga;
     beratBebas.oninput = updateTampilanDanHarga;
+
+    // Tutup modal jika klik di luar area modal
+    window.onclick = (event) => {
+        if (event.target == modal) modal.style.display = "none";
+    }
 </script>
 
 @endsection

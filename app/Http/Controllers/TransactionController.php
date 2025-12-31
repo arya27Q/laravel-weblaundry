@@ -15,8 +15,6 @@ class TransactionController extends Controller
     {
         $customers = Customer::orderBy('name', 'asc')->get();
         $services = Service::all();
-        
-        // Eager loading 'customer' agar tidak berat saat loading halaman
         $transactions = Transaction::with('customer')->latest()->get();
 
         return view('pages.transaksi', compact('customers', 'services', 'transactions'));
@@ -24,7 +22,7 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        // Tambahkan validasi agar data yang masuk pasti benar
+        // 1. Validasi
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'service_type' => 'required|in:kg,pcs',
@@ -32,32 +30,55 @@ class TransactionController extends Controller
         ]);
 
         return DB::transaction(function () use ($request) {
-            // 1. Buat Invoice Otomatis
-            $count = Transaction::whereDate('created_at', now())->count() + 1;
-            $invoice = 'LND-' . date('Ymd') . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+            
+            // 2. Logika Invoice (Anti Duplicate)
+            $lastTransaction = Transaction::whereDate('created_at', now())
+                ->orderBy('id', 'desc')
+                ->first();
 
-            // 2. Simpan Header (Tabel Transactions)
+            $nextNumber = 1;
+            if ($lastTransaction) {
+                $lastNumber = (int)substr($lastTransaction->invoice_code, -3);
+                $nextNumber = $lastNumber + 1;
+            }
+
+            $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+            
+            // Pengaman jika nomor invoice sudah ada
+            while (Transaction::where('invoice_code', $invoice)->exists()) {
+                $nextNumber++;
+                $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+            }
+
+            // 3. Simpan Header (Transaksi)
             $transaction = Transaction::create([
                 'customer_id'    => $request->customer_id,
                 'invoice_code'   => $invoice,
                 'total_price'    => $request->total_price,
                 'status_order'   => 'Menunggu',
                 'payment_status' => 'Belum Bayar',
+                'payment_method' => 'Cash',
             ]);
 
-            // 3. Simpan Detail (Tabel TransactionDetails)
-            // Pastikan qty tidak nol atau null untuk menghindari error Division by Zero
-            $qty = ($request->service_type == 'kg') ? $request->qty_kg : $request->qty_pcs;
-            $qty = (float)($qty > 0 ? $qty : 1); 
-            
-            // Asumsi service_id: 1 untuk Kiloan, 2 untuk Satuan (sesuaikan database kamu)
-            $service_id = ($request->service_type == 'kg') ? 1 : 2;
+            // 4. Penentuan Qty dan Service ID (Disesuaikan dengan Database Enum 'Kg' & 'Pcs')
+            if ($request->service_type == 'kg') {
+                $qty = (float) $request->qty_kg;
+                // Mencari unit 'Kg' (Sesuaikan kapitalnya dengan Database)
+                $service = Service::where('unit', 'Kg')->first();
+                $service_id = $service ? $service->id : 1; 
+            } else {
+                $qty = (float) $request->qty_pcs;
+                // Mencari unit 'Pcs' (Sesuaikan kapitalnya dengan Database)
+                $service = Service::where('unit', 'Pcs')->first();
+                $service_id = $service ? $service->id : 2;
+            }
 
+            // 5. Simpan ke TransactionDetail
             TransactionDetail::create([
                 'transaction_id' => $transaction->id,
                 'service_id'     => $service_id, 
                 'qty'            => $qty,
-                'price_at_time'  => $request->total_price / $qty,
+                'price_at_time'  => $request->total_price / ($qty > 0 ? $qty : 1),
                 'subtotal'       => $request->total_price,
             ]);
 

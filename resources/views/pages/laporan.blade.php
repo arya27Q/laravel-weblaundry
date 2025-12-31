@@ -4,76 +4,80 @@
 
 @section('content')
 
+{{-- 1. FORM FILTER & ACTION BUTTONS --}}
 <div class="card" style="margin-bottom: 24px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div style="display: flex; gap: 12px; align-items: center;">
-            <div>
-                <label style="display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px;">Dari Tanggal</label>
-                <input type="date" class="form-control" style="padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+    <form action="{{ route('laporan.index') }}" method="GET">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div>
+                    <label style="display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px;">Dari Tanggal</label>
+                    <input type="date" name="dari_tanggal" value="{{ $dari }}" class="form-control" style="padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+                <div>
+                    <label style="display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px;">Sampai Tanggal</label>
+                    <input type="date" name="sampai_tanggal" value="{{ $sampai }}" class="form-control" style="padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+                </div>
+                <button type="submit" style="background: #f97316; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Filter
+                </button>
             </div>
-            <div>
-                <label style="display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px;">Sampai Tanggal</label>
-                <input type="date" class="form-control" style="padding: 8px; border-radius: 8px; border: 1px solid #ddd;">
+            
+            <div style="margin-top: 20px;">
+                <button type="button" onclick="alert('Fitur Excel segera hadir!')" style="background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                    <i class="fa-solid fa-file-excel"></i> Export Excel
+                </button>
+                {{-- Perbaikan Link Cetak agar tidak merah di VS Code --}}
+                <a href="{{ route('laporan.cetak', ['dari_tanggal' => $dari, 'sampai_tanggal' => $sampai]) }}" target="_blank" style="text-decoration: none;">
+                    <button type="button" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 8px;">
+                        <i class="fa-solid fa-file-pdf"></i> Cetak PDF
+                    </button>
+                </a>
             </div>
-            <button style="background: #f97316; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 20px;">
-                <i class="fa-solid fa-magnifying-glass"></i> Filter
-            </button>
         </div>
-        
-        <div style="margin-top: 20px;">
-            <button style="background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                <i class="fa-solid fa-file-excel"></i> Export Excel
-            </button>
-            <button style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 8px;">
-                <i class="fa-solid fa-file-pdf"></i> Cetak PDF
-            </button>
-        </div>
-    </div>
+    </form>
 </div>
 
+{{-- 2. STATISTIC CARDS --}}
 <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:20px; margin-bottom: 32px;">
-    
     <div class="card" style="background: linear-gradient(135deg, #f97316, #fb923c); color: white;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
                 <div style="font-size: 14px; opacity: 0.9;">Total Omzet</div>
-                <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">Rp 0</div>
+                <div style="font-size: 24px; font-weight: 700; margin-top: 8px;">Rp {{ number_format($totalOmzet, 0, ',', '.') }}</div>
             </div>
             <i class="fa-solid fa-money-bill-trend-up" style="font-size: 24px; opacity: 0.5;"></i>
         </div>
     </div>
-
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
                 <div style="font-size: 14px; color: #6b7280;">Total Transaksi</div>
-                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">0</div>
+                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">{{ $totalTransaksi }}</div>
             </div>
             <i class="fa-solid fa-receipt" style="font-size: 24px; color: #f97316; opacity: 0.3;"></i>
         </div>
     </div>
-
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
                 <div style="font-size: 14px; color: #6b7280;">Rata-rata/Order</div>
-                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">Rp 0</div>
+                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">Rp {{ number_format($rataRata, 0, ',', '.') }}</div>
             </div>
             <i class="fa-solid fa-calculator" style="font-size: 24px; color: #f97316; opacity: 0.3;"></i>
         </div>
     </div>
-
     <div class="card">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
             <div>
                 <div style="font-size: 14px; color: #6b7280;">Berat Total (Kg)</div>
-                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">0 Kg</div>
+                <div style="font-size: 24px; font-weight: 700; margin-top: 8px; color: #1f2937;">{{ $totalBerat }} Kg</div>
             </div>
             <i class="fa-solid fa-weight-hanging" style="font-size: 24px; color: #f97316; opacity: 0.3;"></i>
         </div>
     </div>
 </div>
 
+{{-- 3. DATA TABLE --}}
 <h3 style="font-weight:600; margin-bottom: 20px;">Detail Laporan Transaksi</h3>
 <div class="card" style="padding: 0; overflow: hidden;">
     <table class="table" style="width: 100%; border-collapse: collapse;">
@@ -89,12 +93,39 @@
             </tr>
         </thead>
         <tbody>
+            @forelse($transactions as $t)
+            @php
+                $isSelesai = $t->payment_status === 'Selesai';
+                $badgeBg = $isSelesai ? '#dcfce7' : '#fee2e2';
+                $badgeColor = $isSelesai ? '#166534' : '#991b1b';
+            @endphp
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 15px;">{{ $t->created_at->format('d/m/Y') }}</td>
+                <td style="font-weight: 600; color: #f97316;">{{ $t->invoice_code }}</td>
+                <td>{{ $t->customer->name ?? 'N/A' }}</td>
+                <td>{{ $t->details->first()->service->service_name ?? '-' }}</td>
+                <td>{{ $t->details->first()->qty ?? 0 }} {{ $t->details->first()->service->unit ?? '' }}</td>
+                <td>Rp {{ number_format($t->total_price, 0, ',', '.') }}</td>
+                <td>
+                    <form action="{{ route('laporan.updateStatus', $t->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" style="border: none; background: none; cursor: pointer; padding: 0;">
+                            {{-- Trik background-color eksplisit agar linter tidak protes --}}
+                            <span style="padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background-color: {{ $badgeBg }}; color: {{ $badgeColor }};">
+                                {{ $t->payment_status }}
+                            </span>
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            @empty
             <tr>
                 <td colspan="7" style="text-align:center; padding: 60px; color: #9ca3af;">
                     <i class="fa-solid fa-chart-line" style="font-size: 48px; margin-bottom: 15px; display: block; opacity: 0.5;"></i>
-                    <span style="font-size: 14px;">Silakan pilih filter tanggal untuk melihat laporan</span>
+                    <span style="font-size: 14px;">Tidak ada data ditemukan.</span>
                 </td>
             </tr>
+            @endforelse
         </tbody>
     </table>
 </div>

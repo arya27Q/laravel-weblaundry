@@ -5,7 +5,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\CucianController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\PembayaranController; // Sesuaikan dengan nama yang kamu pilih
+use App\Http\Controllers\PembayaranController; 
+use App\Http\Controllers\LaporanController;
+
 
 // 1. Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -29,9 +31,13 @@ Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembaya
 Route::post('/pembayaran/konfirmasi', [PembayaranController::class, 'update'])->name('pembayaran.update');
 
 // 6. Laporan & Pengaturan
-Route::view('/laporan', 'pages.laporan')->name('laporan');
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+Route::post('/laporan/update-status/{id}', [LaporanController::class, 'updateStatus'])->name('laporan.updateStatus');
 Route::view('/pengaturan', 'pages.pengaturan')->name('pengaturan');
 
 // 7. Auth
 Route::view('/login', 'pages.login')->name('login');
 Route::view('/signup', 'pages.signup')->name('signup');
+
+Route::get('/laporan/cetak', [LaporanController::class, 'cetak'])->name('laporan.cetak');
