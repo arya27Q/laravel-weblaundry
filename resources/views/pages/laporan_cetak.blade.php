@@ -74,7 +74,7 @@
     
     <div class="no-print" style="margin-bottom: 30px; text-align: center; background: #f1f5f9; padding: 20px; border-radius: 12px;">
         <p style="margin-top: 0; font-size: 13px; color: #64748b;"><b>Tips:</b> Silakan tanda tangan di kotak bawah sebelum menekan tombol Cetak.</p>
-        <button onclick="window.history.back()" style="padding: 10px 20px; cursor: pointer; background: #64748b; color: white; border: none; border-radius: 6px; font-weight: 600;">← Kembali</button>
+       <a href="{{ route('laporan.index') }}" class="no-print" style="text-decoration: none; padding: 11px 20px; cursor: pointer; background: #64748b; color: white; border: none; border-radius: 6px; font-weight: 600; display: inline-block; vertical-align: middle;">← Kembali</a>
         <button onclick="window.print()" style="padding: 10px 20px; cursor: pointer; background: #f97316; color: white; border: none; border-radius: 6px; font-weight: 600; margin-left: 10px;">Cetak Sekarang</button>
     </div>
 

@@ -13,6 +13,7 @@ class TransactionController extends Controller
 {
     public function index()
     {
+       
         $customers = Customer::orderBy('name', 'asc')->get();
         $services = Service::all();
         $transactions = Transaction::with('customer')->latest()->get();
@@ -22,14 +23,18 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
+        
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
-            'service_type' => 'required|in:kg,pcs',
+            'service_id'  => 'required|exists:services,id', 
+            'qty'         => 'required|numeric|min:0.1',    
             'total_price' => 'required|numeric',
         ]);
 
         return DB::transaction(function () use ($request) {
             
+           
+            $today = now()->format('Ymd');
             $lastTransaction = Transaction::whereDate('created_at', now())
                 ->orderBy('id', 'desc')
                 ->first();
@@ -40,12 +45,11 @@ class TransactionController extends Controller
                 $nextNumber = $lastNumber + 1;
             }
 
-            $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-            
+            $invoice = 'LND-' . $today . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
             
             while (Transaction::where('invoice_code', $invoice)->exists()) {
                 $nextNumber++;
-                $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                $invoice = 'LND-' . $today . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
             }
 
             $transaction = Transaction::create([
@@ -57,25 +61,12 @@ class TransactionController extends Controller
                 'payment_method' => 'Cash',
             ]);
 
-           
-            if ($request->service_type == 'kg') {
-                $qty = (float) $request->qty_kg;
-               
-                $service = Service::where('unit', 'Kg')->first();
-                $service_id = $service ? $service->id : 1; 
-            } else {
-                $qty = (float) $request->qty_pcs;
-                
-                $service = Service::where('unit', 'Pcs')->first();
-                $service_id = $service ? $service->id : 2;
-            }
-
-           
+            $service = Service::find($request->service_id);
             TransactionDetail::create([
                 'transaction_id' => $transaction->id,
-                'service_id'     => $service_id, 
-                'qty'            => $qty,
-                'price_at_time'  => $request->total_price / ($qty > 0 ? $qty : 1),
+                'service_id'     => $service->id, 
+                'qty'            => $request->qty,
+                'price_at_time'  => $service->price, 
                 'subtotal'       => $request->total_price,
             ]);
 

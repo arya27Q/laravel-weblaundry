@@ -5,8 +5,6 @@
 @section('content')
 
 <div style="display: grid; grid-template-columns: 1fr 3fr; gap: 24px;">
-    
-    
     <div style="display: flex; flex-direction: column; gap: 12px;">
         <div class="card" style="padding: 10px;">
             <a href="javascript:void(0)" onclick="openSetting('profil', this)" class="nav-setting active" style="display: block; padding: 12px; border-radius: 8px; font-weight: 600; text-decoration: none; margin-bottom: 5px;">
@@ -22,8 +20,6 @@
     </div>
 
     <div id="settings-container">
-        
-       
         <div id="profil" class="tab-content">
             <div class="card">
                 <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
@@ -50,36 +46,15 @@
                     </div>
                 </form>
             </div>
-            
-            <div class="card" style="margin-top: 24px;">
-                <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
-                    <i class="fa-solid fa-tags" style="color: #f97316; margin-right: 8px;"></i> Harga Utama (Dashboard)
-                </h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
-                        <span style="display: block; font-size: 12px; color: #64748b;">Harga Cuci Kiloan (per Kg)</span>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                            <span style="font-weight: 700; font-size: 18px;">Rp {{ number_format($setting->harga_kiloan, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
-                        <span style="display: block; font-size: 12px; color: #64748b;">Harga Cuci Setrika (per Kg)</span>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                            <span style="font-weight: 700; font-size: 18px;">Rp {{ number_format($setting->harga_setrika, 0, ',', '.') }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
-       
         <div id="harga" class="tab-content" style="display: none;">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h3 style="font-weight: 700; color: #1f2937;">
                         <i class="fa-solid fa-tags" style="color: #f97316; margin-right: 8px;"></i> Daftar Layanan & Harga
                     </h3>
-                    <button id="btnTambahLayanan" style="background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
+                    <button onclick="openModalLayanan('add')" style="background: #f97316; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">
                         + Tambah Layanan
                     </button>
                 </div>
@@ -101,8 +76,15 @@
                             <td>Rp {{ number_format($s->price, 0, ',', '.') }}</td>
                             <td>{{ $s->estimation }}</td>
                             <td style="text-align: center;">
-                                <i class="fa-solid fa-pen-to-square" style="color: #f97316; cursor: pointer; margin-right: 10px;"></i>
-                                <i class="fa-solid fa-trash" style="color: #ef4444; cursor: pointer;"></i>
+                                <button onclick="openModalLayanan('edit', {{ json_encode($s) }})" style="border:none; background:none; cursor:pointer;">
+                                    <i class="fa-solid fa-pen-to-square" style="color: #f97316; margin-right: 10px;"></i>
+                                </button>
+                                <button onclick="confirmDeleteService({{ $s->id }})" style="border:none; background:none; cursor:pointer;">
+                                    <i class="fa-solid fa-trash" style="color: #ef4444;"></i>
+                                </button>
+                                <form id="delete-service-{{ $s->id }}" action="{{ route('service.destroy', $s->id) }}" method="POST" style="display:none;">
+                                    @csrf @method('DELETE')
+                                </form>
                             </td>
                         </tr>
                         @endforeach
@@ -111,7 +93,6 @@
             </div>
         </div>
 
-       
         <div id="keamanan" class="tab-content" style="display: none;">
             <div class="card">
                 <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
@@ -145,42 +126,41 @@
     </div>
 </div>
 
-
 <div id="modalLayanan" class="modal-overlay" style="display: none;">
     <div class="modal-box">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h3 style="font-weight:700; color: #1f2937;">Tambah Layanan Baru</h3>
-            <i class="fa-solid fa-xmark" id="closeModalLayanan" style="cursor:pointer; color: #9ca3af; font-size: 20px;"></i>
+            <h3 id="modalLayananTitle" style="font-weight:700; color: #1f2937;">Tambah Layanan Baru</h3>
+            <i class="fa-solid fa-xmark" onclick="closeModalLayanan()" style="cursor:pointer; color: #9ca3af; font-size: 20px;"></i>
         </div>
 
-        <form action="{{ route('layanan.store') }}" method="POST">
+        <form id="formLayanan" action="{{ route('service.store') }}" method="POST">
             @csrf
+            <div id="serviceMethod"></div>
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Nama Layanan</label>
-                <input type="text" name="service_name" class="form-control" placeholder="Contoh: Cuci Kiloan Express" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <input type="text" name="service_name" id="service_name" class="form-control" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
                     <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Satuan</label>
-                    <select name="unit" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <select name="unit" id="service_unit" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                         <option value="Kg">Kg</option>
                         <option value="Pcs">Pcs</option>
-                        <option value="Set">Set</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Harga (Rp)</label>
-                    <input type="number" name="price" class="form-control" placeholder="0" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <input type="number" name="price" id="service_price" class="form-control" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Estimasi Selesai</label>
-                <input type="text" name="estimation" class="form-control" placeholder="Contoh: 1 Hari / 24 Jam" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <input type="text" name="estimation" id="service_estimation" class="form-control" placeholder="Contoh: 1 Hari" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
             </div>
 
-            <button type="submit" style="width: 100%; background: #f97316; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
+            <button type="submit" id="btnSubmitLayanan" style="width: 100%; background: #f97316; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
                 Simpan Layanan
             </button>
         </form>
@@ -188,79 +168,84 @@
 </div>
 
 <style>
-    
     .nav-setting.active {
         background: #fff7ed !important;
         color: #f97316 !important;
     }
-    .nav-setting:hover:not(.active) {
-        background: #f9fafb;
-        color: #f97316;
-    }
-
     .modal-overlay {
-        position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;
     }
     .modal-box {
-        background: white;
-        padding: 30px;
-        border-radius: 16px;
-        width: 450px;
-        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        background: white; padding: 30px; border-radius: 16px; width: 450px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        animation: animate__animated animate__fadeInDown animate__faster;
     }
 </style>
 
 <script>
-    
     function openSetting(tabName, elmnt) {
-        var i, tabcontent, navlinks;
-        tabcontent = document.getElementsByClassName("tab-content");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        navlinks = document.getElementsByClassName("nav-setting");
-        for (i = 0; i < navlinks.length; i++) {
+        var tabcontent = document.getElementsByClassName("tab-content");
+        for (var i = 0; i < tabcontent.length; i++) { tabcontent[i].style.display = "none"; }
+        
+        var navlinks = document.getElementsByClassName("nav-setting");
+        for (var i = 0; i < navlinks.length; i++) {
             navlinks[i].classList.remove("active");
             navlinks[i].style.color = "#64748b";
             navlinks[i].style.background = "transparent";
         }
+        
         document.getElementById(tabName).style.display = "block";
         elmnt.classList.add("active");
         elmnt.style.color = "#f97316";
         elmnt.style.background = "#fff7ed";
     }
 
-   
-    document.addEventListener('DOMContentLoaded', function() {
-        const modalLayanan = document.getElementById('modalLayanan');
-        const btnLayanan = document.getElementById('btnTambahLayanan');
-        const closeLayanan = document.getElementById('closeModalLayanan');
-
-        if(btnLayanan) {
-            btnLayanan.onclick = function() {
-                modalLayanan.style.display = 'flex';
-            }
+    const modalLayanan = document.getElementById('modalLayanan');
+    const formLayanan = document.getElementById('formLayanan');
+    
+    function openModalLayanan(mode, data = null) {
+        modalLayanan.style.display = 'flex';
+        if(mode === 'edit' && data) {
+            document.getElementById('modalLayananTitle').innerText = 'Edit Layanan';
+            document.getElementById('btnSubmitLayanan').innerText = 'Update Layanan';
+            formLayanan.action = "{{ url('service') }}/" + data.id;
+            document.getElementById('serviceMethod').innerHTML = '<input type="hidden" name="_method" value="PUT">';
+            
+            document.getElementById('service_name').value = data.service_name;
+            document.getElementById('service_unit').value = data.unit;
+            document.getElementById('service_price').value = data.price;
+            document.getElementById('service_estimation').value = data.estimation;
+        } else {
+            document.getElementById('modalLayananTitle').innerText = 'Tambah Layanan Baru';
+            document.getElementById('btnSubmitLayanan').innerText = 'Simpan Layanan';
+            formLayanan.action = "{{ route('service.store') }}";
+            document.getElementById('serviceMethod').innerHTML = '';
+            formLayanan.reset();
         }
+    }
 
-        if(closeLayanan) {
-            closeLayanan.onclick = function() {
-                modalLayanan.style.display = 'none';
+    function closeModalLayanan() { modalLayanan.style.display = 'none'; }
+    function confirmDeleteService(id) {
+        Swal.fire({
+            title: 'Hapus Layanan?',
+            text: "Layanan ini akan dihapus secara permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-service-' + id).submit();
             }
-        }
+        });
+    }
 
-       
-        window.onclick = function(event) {
-            if (event.target == modalLayanan) {
-                modalLayanan.style.display = 'none';
-            }
-        }
-    });
+    window.onclick = function(event) {
+        if (event.target == modalLayanan) { closeModalLayanan(); }
+    }
 </script>
 
 @endsection
