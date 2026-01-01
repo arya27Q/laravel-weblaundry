@@ -46,11 +46,7 @@
         </a>
     </nav>
 
-   <div class="account">
-    <button class="account-btn" onclick="toggleAccountMenu()">
-        <i class="fa-solid fa-user"></i>
-        Account
-    </button>
+  
 
     <div class="account-menu" id="accountMenu">
        <a href="/login" class="{{ request()->is('login*') ? 'active' : '' }}">

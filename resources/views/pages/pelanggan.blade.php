@@ -4,6 +4,34 @@
 
 @section('content')
 
+
+<style>
+    .modal-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 1100;
+        display: none; justify-content: center; align-items: center;
+    }
+    .modal-content {
+        background: #fff; padding: 30px; border-radius: 15px;
+        width: 100%; max-width: 500px; position: relative;
+        animation: animate__animated animate__fadeInDown animate__faster;
+    }
+    #btnCloseForm {
+        position: absolute; top: 15px; right: 15px; background: none;
+        border: none; font-size: 20px; cursor: pointer; color: #999;
+    }
+    .form-group { margin-bottom: 15px; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #374151; }
+    .form-control {
+        width: 100%; padding: 10px; border-radius: 8px;
+        border: 1px solid #d1d5db; font-size: 14px;
+    }
+    .btn-save {
+        width: 100%; background: #f97316; color: #fff; border: none;
+        padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px;
+    }
+</style>
+
 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
     <h2 style="font-size:24px; font-weight:700; color: #1f2937;">Data Pelanggan</h2>
 
@@ -23,8 +51,7 @@
     </button>
 </div>
 
-{{-- MODAL OVERLAY --}}
-<div id="modalOverlay" class="modal-overlay" style="display: none;">
+<div id="modalOverlay" class="modal-overlay">
     <div class="modal-content">
         <button type="button" id="btnCloseForm" onclick="closeModal()">✕</button>
         <h3 id="modalTitle" style="margin-bottom: 24px; font-size: 20px; font-weight: 700;">Tambah Pelanggan Baru</h3>
@@ -69,10 +96,10 @@
 </div>
 
 <div class="card" style="margin-bottom:24px;">
-    <input id="searchInput" type="text" placeholder="Cari nama atau nomor HP pelanggan..." style="width:97%; padding:12px 16px; border-radius:10px; border:1px solid #e5e7eb; background: #f9fafb;">
+    <input id="searchInput" type="text" placeholder="Cari nama atau nomor HP pelanggan..." style="width:100%; padding:12px 16px; border-radius:10px; border:1px solid #e5e7eb; background: #f9fafb;">
 </div>
 
-<h3 style="font-weight:650; color:#1f2937; margin-left:7px;">Daftar Pelanggan</h3>
+<h3 style="font-weight:650; color:#1f2937; margin-left:7px; margin-bottom: 15px;">Daftar Pelanggan</h3>
 <div class="card">
     <table class="table">
         <thead>
@@ -103,13 +130,14 @@
                         Edit
                     </button>
 
-                    <form action="{{ route('pelanggan.destroy', $customer->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus pelanggan ini?')">
+                    
+                    <form id="delete-form-{{ $customer->id }}" action="{{ route('pelanggan.destroy', $customer->id) }}" method="POST" style="display: none;">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" style="background:#fee2e2; color:#dc2626; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px;">
-                            Hapus
-                        </button>
                     </form>
+                    <button type="button" onclick="confirmDelete({{ $customer->id }})" style="background:#fee2e2; color:#dc2626; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-size:12px;">
+                        Hapus
+                    </button>
                 </td>
             </tr>
             @empty
@@ -128,7 +156,6 @@
     const methodField = document.getElementById('methodField');
     const btnSubmit = document.getElementById('btnSubmit');
 
-    // Trik: Simpan status error ke variabel JS murni agar editor tidak bingung
     const hasAnyErrors = Boolean("{{ $errors->any() }}");
 
     function openModal(mode, data = {}) {
@@ -137,8 +164,8 @@
         if (mode === 'edit') {
             modalTitle.innerText = 'Edit Data Pelanggan';
             btnSubmit.innerText = 'Perbarui Data Pelanggan';
-            mainForm.action = "/pelanggan/" + data.id; 
-            methodField.innerHTML = '<input type="hidden" name="_method" value="PUT">';
+            mainForm.action = "{{ url('pelanggan') }}/" + data.id; 
+            methodField.innerHTML = '@method("PUT")';
             
             document.getElementById('inputName').value = data.name;
             document.getElementById('inputPhone').value = data.phone;
@@ -155,28 +182,48 @@
         }
     }
 
-    document.querySelectorAll('.btn-edit-trigger').forEach(btn => {
-        btn.addEventListener('click', function() {
-            // Mengambil data dari atribut HTML 'data-' ( dataset )
+    document.addEventListener('click', function (e) {
+        if (e.target.classList.contains('btn-edit-trigger')) {
+            const btn = e.target;
             openModal('edit', {
-                id: this.dataset.id,
-                name: this.dataset.name,
-                phone: this.dataset.phone,
-                address: this.dataset.address
+                id: btn.dataset.id,
+                name: btn.dataset.name,
+                phone: btn.dataset.phone,
+                address: btn.dataset.address
             });
-        });
+        }
     });
 
     function closeModal() {
         modalOverlay.style.display = 'none';
     }
 
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'Yakin ingin menghapus?',
+            text: "Data pelanggan akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#f97316',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            showClass: {
+                popup: 'animate__animated animate__zoomIn'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('delete-form-' + id).submit();
+            }
+        })
+    }
+
     window.onclick = function(event) {
         if (event.target == modalOverlay) closeModal();
     }
 
-    // Fitur Cari
-    document.getElementById('searchInput').addEventListener('keyup', function() {
+    document.getElementById('searchInput').addEventListener('input', function() {
         let filter = this.value.toLowerCase();
         let rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
@@ -186,9 +233,5 @@
         });
     });
 </script>
-
-@if(session('success'))
-    <script>alert("{{ session('success') }}");</script>
-@endif
 
 @endsection

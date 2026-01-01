@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1. Tabel Customers (Tanpa Foreign Key)
+        
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -17,7 +17,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 2. Tabel Services (Tanpa Foreign Key)
         Schema::create('services', function (Blueprint $table) {
             $table->id();
             $table->string('service_name');
@@ -28,7 +27,6 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        // 3. Tabel Transactions (Butuh customer_id)
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained()->onDelete('cascade');
@@ -41,7 +39,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 4. Tabel Transaction Details (Butuh transaction_id & service_id)
         Schema::create('transaction_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('transaction_id')->constrained()->onDelete('cascade');

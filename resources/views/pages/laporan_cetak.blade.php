@@ -7,32 +7,26 @@
         * { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-sizing: border-box; }
         body { padding: 40px; color: #334155; line-height: 1.5; background: #fff; }
         
-        /* Header Style */
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
         .brand h1 { margin: 0; color: #f97316; font-size: 28px; letter-spacing: -1px; }
         .brand p { margin: 5px 0 0; color: #64748b; font-size: 14px; }
         .report-info { text-align: right; }
         .report-info h2 { margin: 0; font-size: 18px; color: #1e293b; }
         .report-info p { margin: 5px 0 0; font-size: 13px; color: #64748b; }
-
-        /* Statistics Summary */
         .summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
         .summary-box { padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; }
         .summary-box label { display: block; font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: bold; }
         .summary-box span { font-size: 20px; font-weight: 700; color: #0f172a; }
 
-        /* Table Style */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background-color: #f1f5f9; color: #475569; font-weight: 600; font-size: 12px; text-transform: uppercase; padding: 12px 15px; text-align: left; border: 1px solid #e2e8f0; }
         td { padding: 12px 15px; border: 1px solid #e2e8f0; font-size: 13px; }
         tr:nth-child(even) { background-color: #f8fafc; }
 
-        /* Badge Style */
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .bg-success { background: #dcfce7; color: #166534; }
         .bg-danger { background: #fee2e2; color: #991b1b; }
 
-        /* Footer & Signature Section */
         .footer { margin-top: 50px; display: flex; justify-content: space-between; align-items: flex-end; }
         .signature-container { text-align: center; width: 220px; }
         .signature-container p { margin-bottom: 10px; font-size: 13px; color: #334155; }
@@ -67,7 +61,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        /* Print Settings */
+        
         @media print {
             body { padding: 0; }
             .no-print { display: none; }
@@ -77,7 +71,7 @@
     </style>
 </head>
 <body>
-    {{-- Tombol Navigasi (Hanya muncul di Layar) --}}
+    
     <div class="no-print" style="margin-bottom: 30px; text-align: center; background: #f1f5f9; padding: 20px; border-radius: 12px;">
         <p style="margin-top: 0; font-size: 13px; color: #64748b;"><b>Tips:</b> Silakan tanda tangan di kotak bawah sebelum menekan tombol Cetak.</p>
         <button onclick="window.history.back()" style="padding: 10px 20px; cursor: pointer; background: #64748b; color: white; border: none; border-radius: 6px; font-weight: 600;">← Kembali</button>

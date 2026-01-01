@@ -15,10 +15,10 @@ class PelangganController extends Controller
 
     public function store(Request $request)
     {
-        // Ganti validasinya jadi seperti ini
+        
         $request->validate([
             'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20|unique:customers,phone', // UNIK: biar tidak ganda
+            'phone' => 'required|string|max:20|unique:customers,phone', 
             'address' => 'required|string'
         ]);
 
@@ -28,7 +28,7 @@ class PelangganController extends Controller
 
     public function update(Request $request, $id)
     {
-        // Untuk update, tambahkan id agar nomor HP-nya sendiri tidak dianggap duplikat
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'required|string|max:20|unique:customers,phone,' . $id,

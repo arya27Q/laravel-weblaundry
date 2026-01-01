@@ -22,7 +22,6 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi
         $request->validate([
             'customer_id' => 'required|exists:customers,id',
             'service_type' => 'required|in:kg,pcs',
@@ -31,7 +30,6 @@ class TransactionController extends Controller
 
         return DB::transaction(function () use ($request) {
             
-            // 2. Logika Invoice (Anti Duplicate)
             $lastTransaction = Transaction::whereDate('created_at', now())
                 ->orderBy('id', 'desc')
                 ->first();
@@ -44,13 +42,12 @@ class TransactionController extends Controller
 
             $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
             
-            // Pengaman jika nomor invoice sudah ada
+            
             while (Transaction::where('invoice_code', $invoice)->exists()) {
                 $nextNumber++;
                 $invoice = 'LND-' . date('Ymd') . '-' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
             }
 
-            // 3. Simpan Header (Transaksi)
             $transaction = Transaction::create([
                 'customer_id'    => $request->customer_id,
                 'invoice_code'   => $invoice,
@@ -60,20 +57,20 @@ class TransactionController extends Controller
                 'payment_method' => 'Cash',
             ]);
 
-            // 4. Penentuan Qty dan Service ID (Disesuaikan dengan Database Enum 'Kg' & 'Pcs')
+           
             if ($request->service_type == 'kg') {
                 $qty = (float) $request->qty_kg;
-                // Mencari unit 'Kg' (Sesuaikan kapitalnya dengan Database)
+               
                 $service = Service::where('unit', 'Kg')->first();
                 $service_id = $service ? $service->id : 1; 
             } else {
                 $qty = (float) $request->qty_pcs;
-                // Mencari unit 'Pcs' (Sesuaikan kapitalnya dengan Database)
+                
                 $service = Service::where('unit', 'Pcs')->first();
                 $service_id = $service ? $service->id : 2;
             }
 
-            // 5. Simpan ke TransactionDetail
+           
             TransactionDetail::create([
                 'transaction_id' => $transaction->id,
                 'service_id'     => $service_id, 

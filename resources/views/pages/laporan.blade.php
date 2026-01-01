@@ -4,7 +4,6 @@
 
 @section('content')
 
-{{-- 1. FORM FILTER & ACTION BUTTONS --}}
 <div class="card" style="margin-bottom: 24px;">
     <form action="{{ route('laporan.index') }}" method="GET">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
@@ -23,10 +22,14 @@
             </div>
             
             <div style="margin-top: 20px;">
-                <button type="button" onclick="alert('Fitur Excel segera hadir!')" style="background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    <i class="fa-solid fa-file-excel"></i> Export Excel
-                </button>
-                {{-- Perbaikan Link Cetak agar tidak merah di VS Code --}}
+                
+                <a href="{{ route('laporan.excel', ['dari_tanggal' => $dari, 'sampai_tanggal' => $sampai]) }}" style="text-decoration: none;">
+                    <button type="button" style="background: #22c55e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                    </button>
+                </a>
+
+                
                 <a href="{{ route('laporan.cetak', ['dari_tanggal' => $dari, 'sampai_tanggal' => $sampai]) }}" target="_blank" style="text-decoration: none;">
                     <button type="button" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 8px;">
                         <i class="fa-solid fa-file-pdf"></i> Cetak PDF
@@ -37,7 +40,7 @@
     </form>
 </div>
 
-{{-- 2. STATISTIC CARDS --}}
+
 <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:20px; margin-bottom: 32px;">
     <div class="card" style="background: linear-gradient(135deg, #f97316, #fb923c); color: white;">
         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -77,7 +80,6 @@
     </div>
 </div>
 
-{{-- 3. DATA TABLE --}}
 <h3 style="font-weight:600; margin-bottom: 20px;">Detail Laporan Transaksi</h3>
 <div class="card" style="padding: 0; overflow: hidden;">
     <table class="table" style="width: 100%; border-collapse: collapse;">
@@ -110,7 +112,6 @@
                     <form action="{{ route('laporan.updateStatus', $t->id) }}" method="POST">
                         @csrf
                         <button type="submit" style="border: none; background: none; cursor: pointer; padding: 0;">
-                            {{-- Trik background-color eksplisit agar linter tidak protes --}}
                             <span style="padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; background-color: {{ $badgeBg }}; color: {{ $badgeColor }};">
                                 {{ $t->payment_status }}
                             </span>

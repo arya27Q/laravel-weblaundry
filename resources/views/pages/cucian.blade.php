@@ -15,7 +15,7 @@
         'Selesai' => 'fa-circle-check'
     ];
 
-    // INI KUNCINYA: Memisahkan item di tingkat paling atas agar Grid CSS tidak berantakan
+    
     $dataKiloan = [];
     $dataSatuan = [];
 
@@ -33,9 +33,9 @@
     }
 @endphp
 
-{{-- 1. LAYANAN KILOAN --}}
+
 <h3 style="margin-bottom:16px; font-size: 16px; color: #64748b;">Layanan Kiloan</h3>
-{{-- GANTI STYLE DI BAWAH INI: Pakai flex agar ukuran card konsisten --}}
+
 <div style="display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 30px;">
     @forelse($dataKiloan as $dk)
     <div class="card" style="width: 170px; padding: 16px; border-top: 4px solid #f97316; flex-shrink: 0;">
@@ -63,7 +63,6 @@
     @endforelse
 </div>
 
-{{-- 2. LAYANAN SATUAN (Transaksi Aktif) --}}
 <h3 style="margin-bottom:16px; font-size: 16px; color: #64748b;">Layanan Satuan </h3>
 <div style="display: flex; gap: 16px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 40px; scrollbar-width: thin;">
     @forelse($dataSatuan as $ds)
@@ -92,7 +91,6 @@
     @endforelse
 </div>
 
-{{-- RINGKASAN & METODE PEMBAYARAN --}}
 <h3 style="margin-bottom:16px;">Ringkasan Hari Ini</h3>
 <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:24px; margin-bottom:40px;">
     <div class="card">

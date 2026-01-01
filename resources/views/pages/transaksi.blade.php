@@ -12,7 +12,6 @@
     </button>
 </div>
 
-{{-- MODAL TRANSAKSI --}}
 <div id="modalTransaksi" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:1000;">
     <div class="modal-content" style="background:#fff; padding:30px; border-radius:15px; width:500px; position:relative;">
         <button id="btnCloseModal" style="position:absolute; top:15px; right:15px; border:none; background:none; font-size:20px; cursor:pointer;">✕</button>
@@ -74,7 +73,6 @@
     </div>
 </div>
 
-{{-- DAFTAR TRANSAKSI --}}
 <h3 style="font-weight:600; margin-bottom:16px;">Daftar Transaksi</h3>
 <div class="card" style="background:#fff; padding:20px; border-radius:12px; border:1px solid #eee;">
     <table style="width:100%; border-collapse: collapse;">
@@ -124,9 +122,8 @@
     btnTambah.onclick = () => modal.style.display = 'flex';
     btnClose.onclick = () => modal.style.display = 'none';
 
-    // Harga paket Kiloan
+    
     const priceKg = { "4": 28000, "7": 45000, "9": 60000, "12": 80000, "15": 100000, "20": 130000 };
-    // Harga per PCS
     const HARGA_PER_PCS = 15000;
 
     function updateTampilanDanHarga() {
@@ -137,16 +134,12 @@
             labelInput.innerText = "Berat (Kg)";
             beratDropdown.style.display = 'block';
             beratBebas.style.display = 'none';
-            
-            // Reset input PCS agar tidak dikirim ke server saat pilih KG
             beratBebas.value = ""; 
             total = priceKg[beratDropdown.value] || 0;
         } else {
             labelInput.innerText = "Jumlah (Pcs)";
             beratDropdown.style.display = 'none';
             beratBebas.style.display = 'block';
-            
-            // Reset dropdown KG agar tidak dikirim ke server saat pilih PCS
             beratDropdown.value = "";
             total = (parseFloat(beratBebas.value) || 0) * HARGA_PER_PCS;
         }
@@ -155,12 +148,10 @@
         totalPriceHidden.value = total;
     }
 
-    // Jalankan fungsi setiap ada perubahan
     jenisLayanan.onchange = updateTampilanDanHarga;
     beratDropdown.onchange = updateTampilanDanHarga;
     beratBebas.oninput = updateTampilanDanHarga;
 
-    // Tutup modal jika klik di luar area modal
     window.onclick = (event) => {
         if (event.target == modal) modal.style.display = "none";
     }

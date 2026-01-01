@@ -4,7 +4,8 @@
 
 @section('content')
 
-<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px;">
+<div style="display: grid; grid-template-columns: 1fr 3fr; gap: 24px;">
+    
     
     <div style="display: flex; flex-direction: column; gap: 12px;">
         <div class="card" style="padding: 10px;">
@@ -22,25 +23,27 @@
 
     <div id="settings-container">
         
+       
         <div id="profil" class="tab-content">
             <div class="card">
                 <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
                     <i class="fa-solid fa-store" style="color: #f97316; margin-right: 8px;"></i> Profil Laundry
                 </h3>
-                <form action="#" method="POST">
+                <form action="{{ route('pengaturan.updateProfil') }}" method="POST">
+                    @csrf
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="form-group">
                             <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Nama Laundry</label>
-                            <input type="text" class="form-control" value="Laundry Jaya" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="text" name="nama_laundry" class="form-control" value="{{ $setting->nama_laundry }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                         </div>
                         <div class="form-group">
                             <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Nomor WhatsApp</label>
-                            <input type="text" class="form-control" value="08123456789" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="text" name="whatsapp" class="form-control" value="{{ $setting->whatsapp }}" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                         </div>
                     </div>
                     <div class="form-group" style="margin-top: 20px;">
                         <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Alamat Lengkap</label>
-                        <textarea class="form-control" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">Jl. Raya Gubeng No. 123, Kota Surabaya, Jawa Timur</textarea>
+                        <textarea name="alamat" class="form-control" rows="3" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">{{ $setting->alamat }}</textarea>
                     </div>
                     <div style="margin-top: 20px; text-align: right;">
                         <button type="submit" style="background: #f97316; color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: 600; cursor: pointer;">Simpan Perubahan</button>
@@ -50,27 +53,26 @@
             
             <div class="card" style="margin-top: 24px;">
                 <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
-                    <i class="fa-solid fa-tags" style="color: #f97316; margin-right: 8px;"></i> Pengaturan Harga Utama
+                    <i class="fa-solid fa-tags" style="color: #f97316; margin-right: 8px;"></i> Harga Utama (Dashboard)
                 </h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
                         <span style="display: block; font-size: 12px; color: #64748b;">Harga Cuci Kiloan (per Kg)</span>
                         <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                            <span style="font-weight: 700; font-size: 18px;">Rp 7.000</span>
-                            <button style="background: none; border: none; color: #f97316; cursor: pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <span style="font-weight: 700; font-size: 18px;">Rp {{ number_format($setting->harga_kiloan, 0, ',', '.') }}</span>
                         </div>
                     </div>
                     <div style="background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
                         <span style="display: block; font-size: 12px; color: #64748b;">Harga Cuci Setrika (per Kg)</span>
                         <div style="display: flex; align-items: center; gap: 8px; margin-top: 5px;">
-                            <span style="font-weight: 700; font-size: 18px;">Rp 10.000</span>
-                            <button style="background: none; border: none; color: #f97316; cursor: pointer;"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <span style="font-weight: 700; font-size: 18px;">Rp {{ number_format($setting->harga_setrika, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
+       
         <div id="harga" class="tab-content" style="display: none;">
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -92,40 +94,44 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @foreach($services as $s)
                         <tr style="border-bottom: 1px solid #f3f4f6;">
-                            <td style="padding: 12px; font-weight: 500;">Cuci Kiloan Reguler</td>
-                            <td>Kg</td>
-                            <td>Rp 7.000</td>
-                            <td>2-3 Hari</td>
+                            <td style="padding: 12px; font-weight: 500;">{{ $s->service_name }}</td>
+                            <td>{{ $s->unit }}</td>
+                            <td>Rp {{ number_format($s->price, 0, ',', '.') }}</td>
+                            <td>{{ $s->estimation }}</td>
                             <td style="text-align: center;">
                                 <i class="fa-solid fa-pen-to-square" style="color: #f97316; cursor: pointer; margin-right: 10px;"></i>
                                 <i class="fa-solid fa-trash" style="color: #ef4444; cursor: pointer;"></i>
                             </td>
                         </tr>
+                        @endforeach
                     </tbody>
                 </table>
             </div>
         </div>
 
+       
         <div id="keamanan" class="tab-content" style="display: none;">
             <div class="card">
                 <h3 style="font-weight: 700; margin-bottom: 20px; color: #1f2937;">
                     <i class="fa-solid fa-lock" style="color: #f97316; margin-right: 8px;"></i> Keamanan Akun
                 </h3>
-                <form action="#" method="POST">
+                <form action="{{ route('pengaturan.updatePassword') }}" method="POST">
+                    @csrf
                     <div style="display: flex; flex-direction: column; gap: 15px;">
                         <div class="form-group">
                             <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Password Saat Ini</label>
-                            <input type="password" class="form-control" placeholder="********" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                            <input type="password" name="current_password" class="form-control" placeholder="********" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div class="form-group">
                                 <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Password Baru</label>
-                                <input type="password" class="form-control" placeholder="Minimal 8 karakter" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                                <input type="password" name="new_password" class="form-control" placeholder="Minimal 8 karakter" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                             </div>
                             <div class="form-group">
                                 <label style="display: block; font-size: 14px; font-weight: 600; margin-bottom: 8px;">Ulangi Password Baru</label>
-                                <input type="password" class="form-control" placeholder="********" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                                <input type="password" name="new_password_confirmation" class="form-control" placeholder="********" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                             </div>
                         </div>
                     </div>
@@ -139,23 +145,25 @@
     </div>
 </div>
 
+
 <div id="modalLayanan" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
+    <div class="modal-box">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3 style="font-weight:700; color: #1f2937;">Tambah Layanan Baru</h3>
             <i class="fa-solid fa-xmark" id="closeModalLayanan" style="cursor:pointer; color: #9ca3af; font-size: 20px;"></i>
         </div>
 
-        <form action="#">
+        <form action="{{ route('layanan.store') }}" method="POST">
+            @csrf
             <div class="form-group" style="margin-bottom: 15px;">
                 <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Nama Layanan</label>
-                <input type="text" class="form-control" placeholder="Contoh: Cuci Kiloan Express" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <input type="text" name="service_name" class="form-control" placeholder="Contoh: Cuci Kiloan Express" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
             </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
                     <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Satuan</label>
-                    <select class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <select name="unit" class="form-control" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                         <option value="Kg">Kg</option>
                         <option value="Pcs">Pcs</option>
                         <option value="Set">Set</option>
@@ -163,13 +171,13 @@
                 </div>
                 <div class="form-group">
                     <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Harga (Rp)</label>
-                    <input type="number" class="form-control" placeholder="0" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <input type="number" name="price" class="form-control" placeholder="0" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
                 </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 20px;">
                 <label style="display:block; font-size: 14px; font-weight:600; margin-bottom: 5px;">Estimasi Selesai</label>
-                <input type="text" class="form-control" placeholder="Contoh: 1 Hari / 24 Jam" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                <input type="text" name="estimation" class="form-control" placeholder="Contoh: 1 Hari / 24 Jam" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
             </div>
 
             <button type="submit" style="width: 100%; background: #f97316; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer;">
@@ -180,6 +188,7 @@
 </div>
 
 <style>
+    
     .nav-setting.active {
         background: #fff7ed !important;
         color: #f97316 !important;
@@ -188,10 +197,27 @@
         background: #f9fafb;
         color: #f97316;
     }
+
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    .modal-box {
+        background: white;
+        padding: 30px;
+        border-radius: 16px;
+        width: 450px;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
 </style>
 
 <script>
-    // FUNGSI PINDAH TAB
+    
     function openSetting(tabName, elmnt) {
         var i, tabcontent, navlinks;
         tabcontent = document.getElementsByClassName("tab-content");
@@ -210,7 +236,7 @@
         elmnt.style.background = "#fff7ed";
     }
 
-    // KONTROL MODAL TAMBAH LAYANAN
+   
     document.addEventListener('DOMContentLoaded', function() {
         const modalLayanan = document.getElementById('modalLayanan');
         const btnLayanan = document.getElementById('btnTambahLayanan');
@@ -228,6 +254,7 @@
             }
         }
 
+       
         window.onclick = function(event) {
             if (event.target == modalLayanan) {
                 modalLayanan.style.display = 'none';

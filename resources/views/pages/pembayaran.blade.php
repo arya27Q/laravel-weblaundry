@@ -31,7 +31,7 @@
     </div>
 </div>
 
-{{-- HEADER TABEL --}}
+
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <h3 style="font-weight:600; margin: 0; color: #1f2937;">Riwayat Pembayaran</h3>
     <button id="btnCatatBayar" style="background: #f97316; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
@@ -39,7 +39,7 @@
     </button>
 </div>
 
-{{-- TABEL DATA --}}
+
 <div class="card" style="padding: 0; overflow: hidden;">
     <table class="table" style="width: 100%; border-collapse: collapse;">
         <thead>
@@ -78,7 +78,7 @@
     </table>
 </div>
 
-{{-- MODAL BAYAR --}}
+
 <div id="modalBayar" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
